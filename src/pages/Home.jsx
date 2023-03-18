@@ -29,15 +29,23 @@ const Home = () => {
 
   const addItem = (item) => {
     const newCartItem = [...cartItem]
-    if (newCartItem.find((i) => i.id === item.id)) {
-      return alert("Item already added")
-    }
+    // if (newCartItem.find((i) => i.id === item.id)) {
+    //   return alert("Item already added")
+    // }
     newCartItem.push(item)
     setTotalPrice(total().toFixed(2))
     setCartItem(newCartItem)
     localStorage.setItem("cartItem", JSON.stringify(newCartItem))
   }
+  const isItemSaved = (id) => {
+    const savedItem = cartItem.find((item) => item.id === id)
+    if (savedItem) {
+      return true
+    }
+    return false
+  }
 
+  console.log(isItemSaved);
   useEffect(() => {
     const cartItm = localStorage.getItem("cartItem")
     if (cartItm) {
@@ -73,9 +81,9 @@ const Home = () => {
 
   return (
     <>
-    {
-      open && <Cart/>
-    }
+      {
+        open && <Cart />
+      }
       <HeroSection />
       <div className="flex items-center mt-10 ml-5 md:ml-0">
         <select name="Test" className="bg-white/30 px-3 md:px-10 py-3 rounded-md selection:bg-slate-700 outline-none" id="">
@@ -93,7 +101,7 @@ const Home = () => {
           <button className="of-btn" onClick={() => sortByLowPrice()}>$Low</button>
         </div>
         <p><small className="of-btn -mr-5">Total Price</small>: <b>${totalPrice}</b></p>
-        <p><small className="of-btn -mr-5" onClick={()=> setOpen(!open)}>Cart</small>: <b>{cartItem.length}</b></p>
+        <p><small className="of-btn -mr-5" onClick={() => setOpen(!open)}>Cart</small>: <b>{cartItem.length}</b></p>
       </div>
       <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-10 px-5 md:px-0">
         {
@@ -109,8 +117,9 @@ const Home = () => {
                       item.choice.length > 0 ? <button className="of-cardbtn" onClick={() => getvariant(item.choice)}>See Variant</button> : null
                     }
                     <div>
-                      {
-                      <button className="of-btn -ml-5 -mb-10" onClick={() => addItem(item)}>Add to cart</button>
+                      {cartItem && isItemSaved(item.id) ? <button className="of-btn -ml-5 -mb-10" disabled="true">Added</button>
+                        :
+                        <button className="of-btn -ml-5 -mb-10" onClick={() => addItem(item)} >Add to cart</button>
                       }
                     </div>
                   </div>
