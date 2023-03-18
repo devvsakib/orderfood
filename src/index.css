@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #01011d;
+  color: white;
+}
+
+.App {
+  max-width: 1300px;
+  margin-inline: auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  
+}
+main{
+  flex: 1;
+}
+
+.of-btn{
+  @apply bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 px-5 py-2 rounded-md text-xl text-transparent bg-clip-text font-semibold hover:to-blue-400 hover:from-pink-500 duration-200 transition-all
+}
+.of-cardbtn{
+  @apply bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500  pt-5 rounded-md text-sm text-transparent bg-clip-text font-semibold hover:to-blue-400 hover:from-pink-500 duration-200 transition-all
+  }
+
+.of-input{
+  @apply py-2 px-5 rounded-sm outline-none shadow-sm bg-black bg-gradient-to-r backdrop-blur-md from-violet-500/40 to-purple-600/40
+  py-2 px-5 rounded-sm outline-none shadow-sm bg-black bg-gradient-to-r backdrop-blur-md from-violet-500/40 to-purple-600/40;
+}
