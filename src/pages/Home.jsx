@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import HeroSection from "../components/Header/HeroSection"
+import Cart from "../components/Main/Cart"
 import { menu } from "./data.json"
 
 const getPrice = () => {
@@ -10,12 +11,14 @@ const getPrice = () => {
 }
 
 const Home = () => {
+  const [open, setOpen] = useState(false)
   const [foodType, setFoodType] = useState("Ben & Jerry's")
   const [data, setData] = useState(menu)
   const [isloading, setLoading] = useState(false)
   const [cartItem, setCartItem] = useState(getPrice() || [])
   const [totalPrice, setTotalPrice] = useState(0)
- 
+  const [addedItem, setAddedItem] = useState(false)
+
   useEffect(() => {
     setLoading(true)
     setTimeout(() => {
@@ -26,6 +29,9 @@ const Home = () => {
 
   const addItem = (item) => {
     const newCartItem = [...cartItem]
+    if (newCartItem.find((i) => i.id === item.id)) {
+      return alert("Item already added")
+    }
     newCartItem.push(item)
     setTotalPrice(total().toFixed(2))
     setCartItem(newCartItem)
@@ -45,7 +51,7 @@ const Home = () => {
     const t = cartItem.reduce((acc, item) => acc + item.price, 0)
     return t
   }
-  
+
   const sortByHighPrice = () => {
     const sortedMenu = { ...menu };
     sortedMenu.categories = sortedMenu.categories.map((category) => {
@@ -67,6 +73,9 @@ const Home = () => {
 
   return (
     <>
+    {
+      open && <Cart/>
+    }
       <HeroSection />
       <div className="flex items-center mt-10 ml-5 md:ml-0">
         <select name="Test" className="bg-white/30 px-3 md:px-10 py-3 rounded-md selection:bg-slate-700 outline-none" id="">
@@ -84,7 +93,7 @@ const Home = () => {
           <button className="of-btn" onClick={() => sortByLowPrice()}>$Low</button>
         </div>
         <p><small className="of-btn -mr-5">Total Price</small>: <b>${totalPrice}</b></p>
-        <p><small className="of-btn -mr-5">Cart</small>: <b>{cartItem.length}</b></p>
+        <p><small className="of-btn -mr-5" onClick={()=> setOpen(!open)}>Cart</small>: <b>{cartItem.length}</b></p>
       </div>
       <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-10 px-5 md:px-0">
         {
@@ -100,7 +109,9 @@ const Home = () => {
                       item.choice.length > 0 ? <button className="of-cardbtn" onClick={() => getvariant(item.choice)}>See Variant</button> : null
                     }
                     <div>
+                      {
                       <button className="of-btn -ml-5 -mb-10" onClick={() => addItem(item)}>Add to cart</button>
+                      }
                     </div>
                   </div>
                 ))
