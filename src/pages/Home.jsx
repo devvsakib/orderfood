@@ -2,34 +2,64 @@ import { useEffect, useState } from "react"
 import HeroSection from "../components/Header/HeroSection"
 import { menu } from "./data.json"
 
+const getPrice = () => {
+  if (localStorage.getItem("cartItem")) {
+    const items = JSON.parse(localStorage.getItem("cartItem"))
+    return items
+  }
+}
+
 const Home = () => {
   const [foodType, setFoodType] = useState("Ben & Jerry's")
-  const [data, setData] = useState({})
+  const [data, setData] = useState(menu)
   const [isloading, setLoading] = useState(false)
-
+  const [cartItem, setCartItem] = useState(getPrice() || [])
+  const [totalPrice, setTotalPrice] = useState(0)
+ 
   useEffect(() => {
     setLoading(true)
     setTimeout(() => {
       setData(menu)
       setLoading(false)
-    }, 2000);
+    }, 0);
   }, [])
 
+  const addItem = (item) => {
+    const newCartItem = [...cartItem]
+    newCartItem.push(item)
+    setTotalPrice(total().toFixed(2))
+    setCartItem(newCartItem)
+    localStorage.setItem("cartItem", JSON.stringify(newCartItem))
+  }
 
+  useEffect(() => {
+    const cartItm = localStorage.getItem("cartItem")
+    if (cartItm) {
+      setCartItem(JSON.parse(cartItm))
+    }
+    const t = total().toFixed(2)
+    setTotalPrice(t)
+  }, [cartItem])
+
+  const total = () => {
+    const t = cartItem.reduce((acc, item) => acc + item.price, 0)
+    return t
+  }
+  
   const sortByHighPrice = () => {
-    const sortedMenu = { ...menu }; // create a copy of the menu object
+    const sortedMenu = { ...menu };
     sortedMenu.categories = sortedMenu.categories.map((category) => {
       const sortedProducts = category.products.sort((a, b) => b.price - a.price);
-      return { ...category, products: sortedProducts }; // create a copy of the category object with sorted products
+      return { ...category, products: sortedProducts };
     });
     setData(sortedMenu);
   }
 
   const sortByLowPrice = () => {
-    const sortedMenu = { ...menu }; // create a copy of the menu object
+    const sortedMenu = { ...menu };
     sortedMenu.categories = sortedMenu.categories.map((category) => {
       const sortedProducts = category.products.sort((a, b) => a.price - b.price);
-      return { ...category, products: sortedProducts }; // create a copy of the category object with sorted products
+      return { ...category, products: sortedProducts };
     });
     setData(sortedMenu);
   }
@@ -53,6 +83,8 @@ const Home = () => {
           <button className="of-btn m-0" onClick={() => sortByHighPrice()}>$High</button>
           <button className="of-btn" onClick={() => sortByLowPrice()}>$Low</button>
         </div>
+        <p><small className="of-btn -mr-5">Total Price</small>: <b>${totalPrice}</b></p>
+        <p><small className="of-btn -mr-5">Cart</small>: <b>{cartItem.length}</b></p>
       </div>
       <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-10 px-5 md:px-0">
         {
@@ -67,6 +99,9 @@ const Home = () => {
                     {
                       item.choice.length > 0 ? <button className="of-cardbtn" onClick={() => getvariant(item.choice)}>See Variant</button> : null
                     }
+                    <div>
+                      <button className="of-btn -ml-5 -mb-10" onClick={() => addItem(item)}>Add to cart</button>
+                    </div>
                   </div>
                 ))
                 : null
